@@ -2,7 +2,7 @@
   "name": "finalizer-server",
   "version": "0.0.1",
   "description": "Server to manage npm builds from external projects.",
-  "main": "redis-server & node server.js",
+  "main": "node server.js",
   "dependencies": {
     "httpdispatcher": "^0.4.0"
   },
@@ -18,7 +18,10 @@
   "keywords": [
     "npm"
   ],
-  "author": "Alberto Estrada",
+  "contributors": [
+    {"name": "Alberto Estrada", "email": "albertoe@gmail.com"},
+    {"name": "Jonathan Torres"}
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Nobox/finalizer-server/issues"
