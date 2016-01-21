@@ -30,14 +30,13 @@ server.listen(PORT, function(){
 
 dispatcher.setStatic('resources');
 
-//A sample GET request
-dispatcher.onGet("/page1", function(req, res) {
+dispatcher.onGet("/create", function(req, res) {
     res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.end('Page One');
+    res.end('create request');
 });
 
-//A sample POST request
-dispatcher.onPost("/post1", function(req, res) {
+
+dispatcher.onGet("/download", function(req, res) {
     res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.end('Got Post Data');
+    res.end('download request');
 });
