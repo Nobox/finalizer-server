@@ -1,8 +1,7 @@
 {
   "name": "finalizer-server",
   "version": "0.0.1",
-  "description": "Server to manage npm builds from external projects.",
-  "main": "node server.js",
+  "description": "Server to manage and build npm dependencies.",
   "dependencies": {
     "httpdispatcher": "^0.4.0"
   },
@@ -15,16 +14,20 @@
     "type": "git",
     "url": "git+https://github.com/Nobox/finalizer-server.git"
   },
-  "keywords": [
-    "npm"
-  ],
+  "keywords": ["npm"],
   "contributors": [
-    {"name": "Alberto Estrada", "email": "albertoe@gmail.com"},
-    {"name": "Jonathan Torres"}
+    {
+      "name": "Alberto Estrada",
+      "email": "albertoe@gmail.com"
+    },
+    {
+      "name": "Jonathan Torres",
+      "email": "jonathantorres41@gmail.com"
+    }
   ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Nobox/finalizer-server/issues"
   },
-  "homepage": "https://github.com/Nobox/finalizer-server#readme"
+  "homepage": "https://github.com/Nobox/finalizer-server"
 }
