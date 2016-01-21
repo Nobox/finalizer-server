@@ -1,2 +1,2 @@
 # Finalizer Server
-Builder of npm dependencies.
+Server to manage and build npm dependencies.
