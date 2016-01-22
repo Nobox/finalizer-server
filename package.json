@@ -14,7 +14,9 @@
     "type": "git",
     "url": "git+https://github.com/Nobox/finalizer-server.git"
   },
-  "keywords": ["npm"],
+  "keywords": [
+    "npm"
+  ],
   "contributors": [
     {
       "name": "Alberto Estrada",
