@@ -1,43 +1,11 @@
-//Lets require/import the HTTP module
-var http = require('http');
-var dispatcher = require('httpdispatcher');
+var express = require('express');
+var server = express();
+var PORT = 8080;
 
-//Lets define a port we want to listen to
-const PORT=8080;
-
-//Lets use our dispatcher
-function handleRequest(request, response){
-    try {
-        //log the request on console
-        console.log(request.url);
-        //Disptach
-        dispatcher.dispatch(request, response);
-    } catch(err) {
-        console.log(err);
-    }
-}
-
-//Create a server
-var server = http.createServer(handleRequest);
-
-
-//Lets start our server
-server.listen(PORT, function(){
-    //Callback triggered when server is successfully listening. Hurray!
-    console.log("Server listening on: http://localhost:%s", PORT);
+server.get('/', function (req, res) {
+    res.send('Finalizer server.');
 });
 
-
-dispatcher.setStatic('resources');
-
-dispatcher.onGet("/create", function(req, res) {
-    res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.end('create request');
-
-});
-
-
-dispatcher.onGet("/download", function(req, res) {
-    res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.end('download request');
+server.listen(PORT, function () {
+    console.log('Finalizer server running on ' + PORT);
 });
