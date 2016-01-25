@@ -4,6 +4,7 @@
   "description": "Server to manage and build npm dependencies.",
   "dependencies": {
     "express": "^4.13.4",
+    "mkdirp": "^0.5.1",
     "rmdir": "^1.2.0",
     "tar": "^2.2.1"
   },
