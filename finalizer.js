@@ -14,7 +14,7 @@ function Finalizer () {
  * based on request
  * @return {[type]} [description]
  */
-Finalizer.prototype.create = function() {
+Finalizer.prototype.create = function(finish) {
     console.log('Create');
     //TODO: make this dynamic
     // project-1 should be unique for each project ( must check if exist )
@@ -48,6 +48,7 @@ Finalizer.prototype.create = function() {
 
                     rmdir(buildPath + '/node_modules', function(err, dirs, files) {
                         console.log('New Module ready!');
+                        finish();
                     });
                 });
             });
@@ -56,6 +57,23 @@ Finalizer.prototype.create = function() {
     });
 
 };
+
+
+Finalizer.prototype.prepareDownload = function(project, callback) {
+    // using project id find on the DB the last build id
+    // TODO: get build id based on project stored
+    // - check if exist build
+    // - return error if build not exist
+    //
+    var buildId = 'x5th68hw5j6ecdi';
+
+    // and return the compressed bundle.
+    var file = './storage/' + project + '/' + buildId + '/compressed.tar.gz';
+
+    return file;
+};
+
+
 
 /**
  * Prepare file system based on project
