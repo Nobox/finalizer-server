@@ -1,11 +1,12 @@
 var Installer = require('./lib/installer');
-var Tarball = require('./lib/tarball');
-var fs = require('fs');
-var rmdir = require( 'rmdir' );
-var mkdirp = require('mkdirp');
-
+    Tarball = require('./lib/tarball'),
+    fs = require('fs'),
+    rmdir = require( 'rmdir' ),
+    mkdirp = require('mkdirp'),
+    storagePath = __dirname + '/storage';
 
 function Finalizer () {
+
     this.create();
 }
 
@@ -15,32 +16,32 @@ Finalizer.prototype.create = function() {
     //TODO: make this dynamic
     // project-1 should be unique for each project ( must check if exist )
     // build id should be unique for each build ( must check if there are more than 5 builds )
-
-    var directory = __dirname + '/storage/project-1/build1';
+    //
     var dependencies = fs.readFileSync(__dirname + '/tests/files/installer-test/build/package.json');
 
 
     // TODO: refactor this maybe use a module that handles method
     // chaining in a more elegant way
+    var projectName = Math.random().toString(32).substr(2);
 
-    mkdirp(directory, function(err){
+    this.prepare(projectName, function(buildPath, buildId){
 
-        fs.writeFile(directory + '/package.json', dependencies, function(err){
+        fs.writeFile(buildPath + '/package.json', dependencies, function(err){
 
             console.log('Package json generated');
 
             console.log('Proceeding with npm installation...');
 
-            Installer.install(directory, function() {
+            Installer.install(buildPath, function() {
 
                 console.log('Installation completed...')
                 console.log('Lets proceed with compression...');
 
-                Tarball.compress(directory + '/node_modules', directory + '/compressed.tar.gz', function(){
+                Tarball.compress(buildPath + '/node_modules', buildPath + '/compressed.tar.gz', function(){
 
                     console.log('Cleaning the house...');
 
-                    rmdir(directory + '/node_modules', function(err, dirs, files) {
+                    rmdir(buildPath + '/node_modules', function(err, dirs, files) {
                         console.log('New Module ready!');
                     });
                 });
@@ -49,6 +50,27 @@ Finalizer.prototype.create = function() {
 
     });
 
+};
+
+Finalizer.prototype.prepare = function(project, callback) {
+    // check if project is first or new
+    var path = storagePath + '/' + project;
+    var buildId = Math.random().toString(36).substr(2);
+
+    if (!fs.existsSync(path)) {
+        // - create project folder
+        mkdirp(path);
+    }
+
+    var buildPath = path + '/' + buildId;
+
+    // - count builds
+    // - if more than 5 delete oldest
+    // - create build folder
+    mkdirp(buildPath);
+    // - save build id
+
+    callback(buildPath, buildId);
 };
 
 
