@@ -11,6 +11,11 @@ function Finalizer () {
 }
 
 
+/**
+ * Initialize the creation of a bundle
+ * based on request
+ * @return {[type]} [description]
+ */
 Finalizer.prototype.create = function() {
 
     //TODO: make this dynamic
@@ -52,6 +57,12 @@ Finalizer.prototype.create = function() {
 
 };
 
+/**
+ * Prepare file system based on project
+ * @param  {string}   project  Project name or id
+ * @param  {Function} callback
+ * @return {void}
+ */
 Finalizer.prototype.prepare = function(project, callback) {
     // check if project is first or new
     var path = storagePath + '/' + project;
