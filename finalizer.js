@@ -6,8 +6,6 @@ var Installer = require('./lib/installer');
     storagePath = __dirname + '/storage';
 
 function Finalizer () {
-
-    this.create();
 }
 
 
@@ -17,7 +15,7 @@ function Finalizer () {
  * @return {[type]} [description]
  */
 Finalizer.prototype.create = function() {
-
+    console.log('Create');
     //TODO: make this dynamic
     // project-1 should be unique for each project ( must check if exist )
     // build id should be unique for each build ( must check if there are more than 5 builds )
@@ -32,6 +30,8 @@ Finalizer.prototype.create = function() {
     this.prepare(projectName, function(buildPath, buildId){
 
         fs.writeFile(buildPath + '/package.json', dependencies, function(err){
+
+            if (err) throw err;
 
             console.log('Package json generated');
 
@@ -66,22 +66,35 @@ Finalizer.prototype.create = function() {
 Finalizer.prototype.prepare = function(project, callback) {
     // check if project is first or new
     var path = storagePath + '/' + project;
-    var buildId = Math.random().toString(36).substr(2);
+    var _self = this;
 
     if (!fs.existsSync(path)) {
         // - create project folder
-        mkdirp(path);
+        mkdirp(path, function(){
+            _self.prepareBuildFolder(path, callback);
+        });
+    } else {
+        this.prepareBuildFolder(path, callback);
     }
 
+
+
+
+};
+
+Finalizer.prototype.prepareBuildFolder = function(path, callback) {
+
+    var buildId = Math.random().toString(36).substr(2);
     var buildPath = path + '/' + buildId;
 
     // - count builds
     // - if more than 5 delete oldest
     // - create build folder
-    mkdirp(buildPath);
-    // - save build id
+    mkdirp(buildPath, function(){
+        // - save build id
+        callback(buildPath, buildId);
+    });
 
-    callback(buildPath, buildId);
 };
 
 
