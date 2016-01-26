@@ -6,6 +6,7 @@ var Installer = require('./lib/installer');
     storagePath = __dirname + '/storage';
 
 function Finalizer () {
+
 }
 
 
@@ -15,7 +16,14 @@ function Finalizer () {
  * @return {[type]} [description]
  */
 Finalizer.prototype.create = function(finish) {
+
     console.log('Create');
+
+    // double checks if the storage folder exists
+    if (!fs.existsSync(storagePath)) {
+        fs.mkdirSync(storagePath);
+    }
+
     //TODO: make this dynamic
     // project-1 should be unique for each project ( must check if exist )
     // build id should be unique for each build ( must check if there are more than 5 builds )
@@ -95,10 +103,8 @@ Finalizer.prototype.prepare = function(project, callback) {
         this.prepareBuildFolder(path, callback);
     }
 
-
-
-
 };
+
 
 Finalizer.prototype.prepareBuildFolder = function(path, callback) {
 
