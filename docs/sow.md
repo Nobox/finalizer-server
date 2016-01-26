@@ -49,16 +49,16 @@ The client will be installed on each project and it's sole purpose is to request
 - Run `npm rebuild` to relink all the dependencies.
 
 ## Link (or create) project to the build server
-Command to link the current project to the build server. This should be done only one. Command parameters and options to be decided.
+Command to link the current project to the build server. This should be done only once. Command parameters and options to be decided.
 ```bash
-finalize create project-name
+finalizer create project-name
 ```
 Once the project is created on the build server, it will create the first build automatically.
 
 ## Build project
 The project must exist already on the build server. Command parameters and options to be decided.
 ```bash
-finalize build
+finalizer build
 ```
 If the `package.json` has not changed since the last build, that last build will be used instead. This will prevent the creation of innecesary builds on the server.
 
