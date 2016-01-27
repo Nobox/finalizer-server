@@ -4,7 +4,6 @@ var fs = require('fs');
 var rmdir = require('rmdir');
 
 describe('Tarball', function() {
-
     describe('Compression Test', function () {
         describe('compress() if source directory exists', function () {
             beforeEach(function () {
@@ -14,14 +13,20 @@ describe('Tarball', function() {
                 }
             });
 
+            afterEach(function () {
+                var path = __dirname + '/files/compression-test/compressed-test.tar.gz';
+                if (fs.existsSync(path)) {
+                    fs.unlinkSync(path);
+                }
+            });
+
             it('should compress without error', function (done) {
                 var source = __dirname + '/files/compression-test';
                 var destination = __dirname + '/files/compression-test/compressed-test.tar.gz';
 
                 Tarball.compress(source, destination, function () {
-                    var exists = fs.existsSync(source);
+                    var exists = fs.existsSync(destination);
                     expect(exists).to.be(true);
-                    fs.unlinkSync(destination);
                     done();
                 });
             });

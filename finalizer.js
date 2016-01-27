@@ -1,13 +1,11 @@
 var Installer = require('./lib/installer');
-    Tarball = require('./lib/tarball'),
-    fs = require('fs'),
-    rmdir = require( 'rmdir' ),
-    mkdirp = require('mkdirp'),
-    storagePath = __dirname + '/storage';
+var Tarball = require('./lib/tarball');
+var fs = require('fs');
+var rmdir = require( 'rmdir');
+var mkdirp = require('mkdirp');
+var storagePath = __dirname + '/storage';
 
-function Finalizer () {
-}
-
+function Finalizer () {}
 
 /**
  * Initialize the creation of a bundle
