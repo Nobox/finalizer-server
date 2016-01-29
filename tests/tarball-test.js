@@ -3,47 +3,58 @@ var expect = require('expect.js');
 var fs = require('fs');
 var rmdir = require('rmdir');
 
+function createDirectory(path) {
+    if (!fs.existsSync(path)) {
+        fs.mkdirSync(path);
+    }
+}
+
+function deleteDirectory(path, callback) {
+    rmdir(path, function() {
+        callback();
+    });
+}
+
+function deleteFile(path) {
+    if (fs.existsSync(path)) {
+        fs.unlinkSync(path);
+    }
+}
+
 describe('Tarball', function() {
-    describe('Compression Test', function () {
-        describe('compress() if source directory exists', function () {
-            beforeEach(function () {
-                var path = __dirname + '/files/compression-test';
-                if (!fs.existsSync(path)) {
-                    fs.mkdirSync(path);
-                }
-            });
+    beforeEach(function() {
+        createDirectory(__dirname + '/fixtures/compress-me');
+    });
 
-            afterEach(function () {
-                var path = __dirname + '/files/compression-test/compressed-test.tar.gz';
-                if (fs.existsSync(path)) {
-                    fs.unlinkSync(path);
-                }
+    afterEach(function(done) {
+        var path = __dirname + '/fixtures/compress-me';
+        if (fs.existsSync(path)) {
+            deleteDirectory(path, function() {
+                done();
             });
+        }
+    });
 
-            it('should compress without error', function (done) {
-                var source = __dirname + '/files/compression-test';
-                var destination = __dirname + '/files/compression-test/compressed-test.tar.gz';
+    it('should compress the specified directory', function(done) {
+        var source = __dirname + '/fixtures/compress-me';
+        var destination = __dirname + '/fixtures/compress-me/compress-me.tar.gz';
 
-                Tarball.compress(source, destination, function () {
-                    var exists = fs.existsSync(destination);
-                    expect(exists).to.be(true);
-                    done();
-                });
-            });
+        Tarball.compress(source, destination, function() {
+            var exists = fs.existsSync(destination);
+            expect(exists).to.be(true);
+            done();
         });
+    });
 
-        describe('extract() if compressed file is valid', function () {
-            it('should extract the file without errors', function (done) {
-                var compressFile = __dirname + '/files/uncompression-test/temp.tar.gz';
-                var destination = __dirname + '/files/uncompression-test/';
+    it('should extract the specified directory', function(done) {
+        var compressFile = __dirname + '/fixtures/temp.tar.gz';
+        var destination = __dirname + '/fixtures';
 
-                Tarball.extract(compressFile, destination, function () {
-                    var exists = fs.existsSync(destination + 'node_modules');
-                    expect(exists).to.be(true);
-                    rmdir(destination + 'node_modules', function (err, dirs, files) {
-                        done();
-                    });
-                });
+        Tarball.extract(compressFile, destination, function() {
+            var exists = fs.existsSync(destination + '/node_modules');
+            expect(exists).to.be(true);
+            rmdir(destination + '/node_modules', function() {
+                done();
             });
         });
     });
