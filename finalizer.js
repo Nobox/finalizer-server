@@ -1,65 +1,57 @@
 var Installer = require('./lib/installer');
 var Tarball = require('./lib/tarball');
 var fs = require('fs');
-var rmdir = require( 'rmdir');
+var rmdir = require('rmdir');
 var mkdirp = require('mkdirp');
+var token = require('./lib/token');
 var storagePath = __dirname + '/storage';
 
-function Finalizer () {}
+function Finalizer() {}
 
 /**
- * Initialize the creation of a bundle
- * based on request
- * @return {[type]} [description]
+ * Create project for the first time.
+ * It also creates the first build on this new project.
+ *
+ * @param  {string} project
+ * @param  {string} dependencies
+ * @param  {Function} finish
+ *
+ * @todo It should receive a package.json on the request.
+ * @todo It should receive a project name on the request.
+ * @todo Check if the project already exists, if it does, show a warning and do nothing else :P
+ * @todo Once the project is created, create the first build also.
+ * @return {null}
  */
-Finalizer.prototype.create = function(finish) {
-    console.log('Create');
-
+Finalizer.prototype.create = function(project, dependencies, finish) {
     // double checks if the storage folder exists
     if (!fs.existsSync(storagePath)) {
         fs.mkdirSync(storagePath);
     }
 
-    //TODO: make this dynamic
-    // project-1 should be unique for each project ( must check if exist )
-    // build id should be unique for each build ( must check if there are more than 5 builds )
-    //
-    var dependencies = fs.readFileSync(__dirname + '/tests/files/installer-test/build/package.json');
+    createProject(project, function(buildPath, buildId) {
+        fs.writeFile(buildPath + '/package.json', dependencies, function(err) {
+            if (err) {
+                throw err;
+            }
 
-
-    // TODO: refactor this maybe use a module that handles method
-    // chaining in a more elegant way
-    var projectName = Math.random().toString(32).substr(2);
-
-    this.prepare(projectName, function(buildPath, buildId){
-
-        fs.writeFile(buildPath + '/package.json', dependencies, function(err){
-
-            if (err) throw err;
-
-            console.log('Package json generated');
-
-            console.log('Proceeding with npm installation...');
+            console.log('Created package.json');
+            console.log('Installing npm dependencies...');
 
             Installer.install(buildPath, function() {
+                console.log('Installation completed!');
+                console.log('Creating compressed .tar of dependencies...');
 
-                console.log('Installation completed...')
-                console.log('Lets proceed with compression...');
-
-                Tarball.compress(buildPath + '/node_modules', buildPath + '/compressed.tar.gz', function(){
-
-                    console.log('Cleaning the house...');
-
+                Tarball.compress(buildPath + '/node_modules', buildPath + '/compressed.tar.gz', function() {
+                    console.log('Created .tar archive. Removing node_modules directory...');
                     rmdir(buildPath + '/node_modules', function(err, dirs, files) {
-                        console.log('New Module ready!');
-                        finish();
+                        console.log('Dependencies are ready!');
+                        finish(project);
                     });
                 });
             });
         });
     });
 };
-
 
 Finalizer.prototype.prepareDownload = function(project, callback) {
     // using project id find on the DB the last build id
@@ -75,46 +67,42 @@ Finalizer.prototype.prepareDownload = function(project, callback) {
     return file;
 };
 
-
-
 /**
- * Prepare file system based on project
- * @param  {string}   project  Project name or id
+ * Create project directories.
+ *
+ * @param  {string}   project
  * @param  {Function} callback
- * @return {void}
+ * @return {null}
  */
-Finalizer.prototype.prepare = function(project, callback) {
+function createProject(project, callback) {
     // check if project is first or new
     var path = storagePath + '/' + project;
-    var _self = this;
 
     if (!fs.existsSync(path)) {
-        // - create project folder
-        mkdirp(path, function(){
-            _self.prepareBuildFolder(path, callback);
+        mkdirp(path, function() {
+            createBuild(path, callback);
         });
     } else {
-        this.prepareBuildFolder(path, callback);
+        createBuild(path, callback);
     }
+}
 
-};
-
-
-Finalizer.prototype.prepareBuildFolder = function(path, callback) {
-
-    var buildId = Math.random().toString(36).substr(2);
+/**
+ * Create first project build directories.
+ *
+ * @todo  Count builds, if more than 5 delete oldest.
+ *
+ * @param  {string}   path
+ * @param  {Function} callback
+ * @return {null}
+ */
+function createBuild(path, callback) {
+    var buildId = token.make();
     var buildPath = path + '/' + buildId;
 
-    // - count builds
-    // - if more than 5 delete oldest
-    // - create build folder
-    mkdirp(buildPath, function(){
-        // - save build id
+    mkdirp(buildPath, function() {
         callback(buildPath, buildId);
     });
-
 };
-
-
 
 module.exports = new Finalizer();
