@@ -1,13 +1,7 @@
 var expect = require('expect.js');
 var fs = require('fs');
-var rmdir = require('rmdir');
 var Finalizer = require('../finalizer');
-
-function deleteDirectory(path, callback) {
-    rmdir(path, function() {
-        callback();
-    });
-}
+var utils = require('./utils');
 
 describe('Finalizer', function() {
     var dependencies = fs.readFileSync(__dirname + '/fixtures/package.json');
@@ -15,7 +9,7 @@ describe('Finalizer', function() {
     afterEach(function(done) {
         var path = __dirname + '/../storage/my-project';
         if (fs.existsSync(path)) {
-            deleteDirectory(path, function() {
+            utils.deleteDirectory(path, function() {
                 done();
             });
         } else {

@@ -2,34 +2,17 @@ var Tarball = require('../lib/tarball');
 var expect = require('expect.js');
 var fs = require('fs');
 var rmdir = require('rmdir');
-
-function createDirectory(path) {
-    if (!fs.existsSync(path)) {
-        fs.mkdirSync(path);
-    }
-}
-
-function deleteDirectory(path, callback) {
-    rmdir(path, function() {
-        callback();
-    });
-}
-
-function deleteFile(path) {
-    if (fs.existsSync(path)) {
-        fs.unlinkSync(path);
-    }
-}
+var utils = require('./utils');
 
 describe('Tarball', function() {
     beforeEach(function() {
-        createDirectory(__dirname + '/fixtures/compress-me');
+        utils.createDirectory(__dirname + '/fixtures/compress-me');
     });
 
     afterEach(function(done) {
         var path = __dirname + '/fixtures/compress-me';
         if (fs.existsSync(path)) {
-            deleteDirectory(path, function() {
+            utils.deleteDirectory(path, function() {
                 done();
             });
         }
