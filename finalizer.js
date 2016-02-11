@@ -37,7 +37,7 @@ Finalizer.prototype.create = function(project, dependencies, finish) {
             console.log('Created package.json');
             console.log('Installing npm dependencies...');
 
-            Installer.install(buildPath, function() {
+            Installer.install('npm', buildPath, function() {
                 console.log('Installation completed!');
                 console.log('Creating compressed .tar of dependencies...');
 
