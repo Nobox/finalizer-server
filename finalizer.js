@@ -1,8 +1,8 @@
-var Installer = require('./lib/installer');
-var Tarball = require('./lib/tarball');
 var fs = require('fs');
 var rmdir = require('rmdir');
 var mkdirp = require('mkdirp');
+var Installer = require('./lib/installer');
+var Tarball = require('./lib/tarball');
 var token = require('./lib/token');
 var storagePath = __dirname + '/storage';
 
@@ -53,18 +53,19 @@ Finalizer.prototype.create = function(project, dependencies, finish) {
     });
 };
 
-Finalizer.prototype.prepareDownload = function(project, callback) {
-    // using project id find on the DB the last build id
-    // TODO: get build id based on project stored
-    // - check if exist build
-    // - return error if build not exist
-    //
+/**
+ * Download the latest build of the project.
+ * If the project/build does not exists, throw exception.
+ *
+ * @param  {string}   project
+ * @param  {Function} callback
+ * @return {string}
+ */
+Finalizer.prototype.download = function(project, callback) {
+    // get the latest project build id from redis!
     var buildId = 'x5th68hw5j6ecdi';
 
-    // and return the compressed bundle.
-    var file = './storage/' + project + '/' + buildId + '/compressed.tar.gz';
-
-    return file;
+    return './storage/' + project + '/' + buildId + '/compressed.tar.gz';
 };
 
 /**

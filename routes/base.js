@@ -31,7 +31,7 @@ router.get('/download', function (req, res) {
     // validate project name (some-project-name)
     // client must provide project id
     var project = req.query.project;
-    var file = Finalizer.prepareDownload(project);
+    var file = Finalizer.download(project);
     res.download(file);
 })
 
