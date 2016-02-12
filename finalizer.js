@@ -5,8 +5,9 @@ var slug = require('slug');
 var Installer = require('./lib/installer');
 var Tarball = require('./lib/tarball');
 var token = require('./lib/token');
-var storagePath = __dirname + '/storage';
 var Project = require('./lib/project');
+var Build = require('./lib/build');
+var storagePath = __dirname + '/storage';
 
 function Finalizer() {}
 
@@ -18,9 +19,6 @@ function Finalizer() {}
  * @param  {string} dependencies
  * @param  {Function} finish
  *
- * @todo It should receive a package.json on the request.
- * @todo It should receive a project name on the request.
- * @todo Check if the project already exists, if it does, show a warning and do nothing else :P
  * @todo Once the project is created, create the first build also.
  * @return {null}
  */
@@ -35,18 +33,19 @@ Finalizer.prototype.create = function(projectName, dependencies, finish) {
     // Check if the project already exists, if it does, show a warning and do nothing else
     Project.findOne({ where: { name: projectName, slug: projectSlug }}, function(err, project) {
         if (!project) {
-            Project.create({ name: projectName, slug: projectSlug }, function() {});
-            createProjectFolder(projectSlug, function(buildPath, buildId) {
-                fs.writeFile(buildPath + '/package.json', dependencies, function(err) {
-                    if (err) {
-                        throw err;
-                    }
-                    console.log('Created package.json');
-                    console.log('Installing npm dependencies...');
+            Project.create({ name: projectName, slug: projectSlug }, function(err, project) {
+                createProjectFolder(project, function(buildPath, buildId) {
+                    fs.writeFile(buildPath + '/package.json', dependencies, function(err) {
+                        if (err) {
+                            throw err;
+                        }
+                        console.log('Created package.json');
+                        console.log('Installing npm dependencies...');
 
-                    installDependencies(buildPath, function() {
-                        console.log('Dependencies are ready!');
-                        finish(projectName);
+                        installDependencies(buildPath, function() {
+                            console.log('Dependencies are ready!');
+                            finish(projectName);
+                        });
                     });
                 });
             });
@@ -95,20 +94,20 @@ function installDependencies(path, callback) {
 /**
  * Create project directories.
  *
- * @param  {string}   projectName
+ * @param  {Object}   project
  * @param  {Function} callback
  * @return {null}
  */
-function createProjectFolder(projectName, callback) {
+function createProjectFolder(project, callback) {
     // check if project is first or new
-    var path = storagePath + '/' + projectName;
+    var path = storagePath + '/' + project.slug;
 
     if (!fs.existsSync(path)) {
         mkdirp(path, function() {
-            createBuildFolder(path, callback);
+            createBuildFolder(project, path, callback);
         });
     } else {
-        createBuildFolder(path, callback);
+        createBuildFolder(project, path, callback);
     }
 }
 
@@ -117,13 +116,16 @@ function createProjectFolder(projectName, callback) {
  *
  * @todo  Count builds, if more than 5 delete oldest.
  *
+ * @param  {Object}   project
  * @param  {string}   path
  * @param  {Function} callback
  * @return {null}
  */
-function createBuildFolder(path, callback) {
+function createBuildFolder(project, path, callback) {
     var buildId = token.make();
     var buildPath = path + '/' + buildId;
+
+    project.builds.create({ project_id: project.id, hash: buildId }, function() {});
 
     mkdirp(buildPath, function() {
         callback(buildPath, buildId);
