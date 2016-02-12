@@ -1,10 +1,12 @@
 var fs = require('fs');
 var rmdir = require('rmdir');
 var mkdirp = require('mkdirp');
+var slug = require('slug');
 var Installer = require('./lib/installer');
 var Tarball = require('./lib/tarball');
 var token = require('./lib/token');
 var storagePath = __dirname + '/storage';
+var Project = require('./lib/project');
 
 function Finalizer() {}
 
@@ -12,7 +14,7 @@ function Finalizer() {}
  * Create project for the first time.
  * It also creates the first build on this new project.
  *
- * @param  {string} project
+ * @param  {string} projectName
  * @param  {string} dependencies
  * @param  {Function} finish
  *
@@ -22,34 +24,36 @@ function Finalizer() {}
  * @todo Once the project is created, create the first build also.
  * @return {null}
  */
-Finalizer.prototype.create = function(project, dependencies, finish) {
+Finalizer.prototype.create = function(projectName, dependencies, finish) {
     // double checks if the storage folder exists
     if (!fs.existsSync(storagePath)) {
         fs.mkdirSync(storagePath);
     }
 
-    createProject(project, function(buildPath, buildId) {
-        fs.writeFile(buildPath + '/package.json', dependencies, function(err) {
-            if (err) {
-                throw err;
-            }
+    var projectSlug = slug(projectName);
 
-            console.log('Created package.json');
-            console.log('Installing npm dependencies...');
+    // Check if the project already exists, if it does, show a warning and do nothing else
+    Project.findOne({ where: { name: projectName, slug: projectSlug }}, function(err, project) {
+        if (!project) {
+            Project.create({ name: projectName, slug: projectSlug }, function() {});
+            createProjectFolder(projectSlug, function(buildPath, buildId) {
+                fs.writeFile(buildPath + '/package.json', dependencies, function(err) {
+                    if (err) {
+                        throw err;
+                    }
+                    console.log('Created package.json');
+                    console.log('Installing npm dependencies...');
 
-            Installer.install('npm', buildPath, function() {
-                console.log('Installation completed!');
-                console.log('Creating compressed .tar of dependencies...');
-
-                Tarball.compress(buildPath + '/node_modules', buildPath + '/compressed.tar.gz', function() {
-                    console.log('Created .tar archive. Removing node_modules directory...');
-                    rmdir(buildPath + '/node_modules', function(err, dirs, files) {
+                    installDependencies(buildPath, function() {
                         console.log('Dependencies are ready!');
-                        finish(project);
+                        finish(projectName);
                     });
                 });
             });
-        });
+        } else {
+            console.log('The project exists. I wont build anything.');
+            finish(projectName);
+        }
     });
 };
 
@@ -69,22 +73,42 @@ Finalizer.prototype.download = function(project, callback) {
 };
 
 /**
- * Create project directories.
- *
- * @param  {string}   project
+ * Install and compress node dependencies.
+ * @param  {string}   path
  * @param  {Function} callback
  * @return {null}
  */
-function createProject(project, callback) {
+function installDependencies(path, callback) {
+    Installer.install('npm', path, function() {
+        console.log('Installation completed!');
+        console.log('Creating compressed .tar of dependencies...');
+
+        Tarball.compress(path + '/node_modules', path + '/compressed.tar.gz', function() {
+            console.log('Created .tar archive. Removing node_modules directory...');
+            rmdir(path + '/node_modules', function() {
+                callback();
+            });
+        });
+    });
+}
+
+/**
+ * Create project directories.
+ *
+ * @param  {string}   projectName
+ * @param  {Function} callback
+ * @return {null}
+ */
+function createProjectFolder(projectName, callback) {
     // check if project is first or new
-    var path = storagePath + '/' + project;
+    var path = storagePath + '/' + projectName;
 
     if (!fs.existsSync(path)) {
         mkdirp(path, function() {
-            createBuild(path, callback);
+            createBuildFolder(path, callback);
         });
     } else {
-        createBuild(path, callback);
+        createBuildFolder(path, callback);
     }
 }
 
@@ -97,7 +121,7 @@ function createProject(project, callback) {
  * @param  {Function} callback
  * @return {null}
  */
-function createBuild(path, callback) {
+function createBuildFolder(path, callback) {
     var buildId = token.make();
     var buildPath = path + '/' + buildId;
 
