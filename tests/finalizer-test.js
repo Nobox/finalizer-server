@@ -62,4 +62,15 @@ describe('Finalizer', function() {
             });
         });
     });
+
+    it('should return a path to download the requested build', function(done) {
+        Project.create({ name: 'rambo', slug: 'rambo' }, function(err, project) {
+            project.builds.create({ hash: 'ramboprojecthash' }, function(err, build) {
+                Finalizer.download('rambo', function(path) {
+                    expect(path).to.be('./storage/rambo/ramboprojecthash/compressed.tar.gz');
+                    done();
+                });
+            });
+        });
+    });
 });

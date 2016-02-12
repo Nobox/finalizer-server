@@ -56,7 +56,7 @@ Finalizer.prototype.create = function(projectName, dependencies, finish) {
 };
 
 /**
- * Download the latest build of the project.
+ * Return path of latest build of the project.
  * If the project/build does not exists, show warning.
  *
  * @param  {string}   project
@@ -64,10 +64,15 @@ Finalizer.prototype.create = function(projectName, dependencies, finish) {
  * @return {string}
  */
 Finalizer.prototype.download = function(project, callback) {
-    // get the latest project build id from redis!
-    var buildId = 'x5th68hw5j6ecdi';
-
-    return './storage/' + project + '/' + buildId + '/compressed.tar.gz';
+    var projectSlug = slug(project);
+    Project.findOne({ where: { slug: projectSlug }}, function(err, project) {
+        if (!project) {
+            console.log('Project "' + project + '" was not found.');
+        }
+        Build.findOne({ where: { project_id: project.id }}, function(err, build) {
+            callback('./storage/' + project.slug + '/' + build.hash + '/compressed.tar.gz');
+        });
+    });
 };
 
 /**
