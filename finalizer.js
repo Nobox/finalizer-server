@@ -19,7 +19,6 @@ function Finalizer() {}
  * @param  {string} dependencies
  * @param  {Function} finish
  *
- * @todo Once the project is created, create the first build also.
  * @return {null}
  */
 Finalizer.prototype.create = function(projectName, dependencies, finish) {
@@ -34,23 +33,23 @@ Finalizer.prototype.create = function(projectName, dependencies, finish) {
     Project.findOne({ where: { name: projectName, slug: projectSlug }}, function(err, project) {
         if (!project) {
             Project.create({ name: projectName, slug: projectSlug }, function(err, project) {
+                console.log('Creating project: "' + projectName + '"');
                 createProjectFolder(project, function(buildPath, buildId) {
                     fs.writeFile(buildPath + '/package.json', dependencies, function(err) {
                         if (err) {
                             throw err;
                         }
-                        console.log('Created package.json');
-                        console.log('Installing npm dependencies...');
+                        console.log('Created package.json. Installing npm dependencies...');
 
                         installDependencies(buildPath, function() {
-                            console.log('Dependencies are ready!');
+                            console.log('Project "' + projectName + '" created.');
                             finish(projectName);
                         });
                     });
                 });
             });
         } else {
-            console.log('The project exists. I wont build anything.');
+            console.log('Project "' + projectName + '" already exists.');
             finish(projectName);
         }
     });
@@ -58,7 +57,7 @@ Finalizer.prototype.create = function(projectName, dependencies, finish) {
 
 /**
  * Download the latest build of the project.
- * If the project/build does not exists, throw exception.
+ * If the project/build does not exists, show warning.
  *
  * @param  {string}   project
  * @param  {Function} callback
