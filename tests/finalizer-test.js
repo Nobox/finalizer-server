@@ -1,6 +1,6 @@
 var expect = require('expect.js');
 var fs = require('fs');
-var Finalizer = require('../finalizer');
+var Finalizer = require('../lib/finalizer');
 var utils = require('./utils');
 var Project = require('../lib/project');
 var Build = require('../lib/build');

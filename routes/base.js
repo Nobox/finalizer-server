@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var Finalizer = require('../finalizer');
+var Finalizer = require('../lib/finalizer');
 
 router.use(function(req, res, next) {
     // TODO: authorize requests
@@ -13,7 +13,7 @@ router.use(function(req, res, next) {
  * It should also create the first build.
  * This should be done only once.
  */
-router.get('/create', function(req, res){
+router.get('/create', function(req, res) {
     // use an authentication token?
     // validate project name (some-project-name)
     // receive a valid package.json
@@ -26,7 +26,7 @@ router.get('/create', function(req, res){
  * api/download
  * Endpoint to request the latest build from the server.
  */
-router.get('/download', function (req, res) {
+router.get('/download', function(req, res) {
     // TODO: validate request client should be authorized on the server
     // validate project name (some-project-name)
     // client must provide project id
