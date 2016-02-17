@@ -27,7 +27,7 @@ Each time a build is created, these are the steps executed by the server.
 - Run `npm install`
 - Compress and make the `.tar` file from the `node_modules` folder.
 - Remove the `node_modules` folder.
-- Dispatch a signal to the client that the build is ready.
+- Dispatch a signal to the client that the build is ready?
 
 ** For now, we won't be using `git` to clone the project, we just might send a `POST` request from the client with the contents of the `package.json`?
 
@@ -53,7 +53,14 @@ Command to link the current project to the build server. This should be done onl
 ```bash
 finalizer create project-name
 ```
-Once the project is created on the build server, it will create the first build automatically.
+Once the project is created on the build server, it will create the first build automatically. It will not download anything.
+
+## Download latest build
+The project must exist already on the build server. This will be done always by default. Command parameters and options to be decided.
+```bash
+finalizer
+```
+If the `package.json` of the latest build on the build server is outdated, then finalizer will show a warning suggesting to trigger a new build.
 
 ## Build project
 The project must exist already on the build server. Command parameters and options to be decided.
