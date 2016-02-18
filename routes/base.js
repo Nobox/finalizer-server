@@ -12,27 +12,31 @@ router.use(function(req, res, next) {
  * Endpoint to link or create project on the build server.
  * It should also create the first build.
  * This should be done only once.
+ *
+ * @todo use an authentication token?
+ * @todo validate project name (some-project-name)
+ * @todo receive a valid package.json
  */
-router.get('/create', function(req, res) {
-    // use an authentication token?
-    // validate project name (some-project-name)
-    // receive a valid package.json
-    Finalizer.create(function () {
-        res.send('Module created');
+router.post('/create', function(req, res) {
+    var projectName = req.body.name;
+    var dependencies = req.body.dependencies;
+    Finalizer.create(projectName, dependencies, function() {
+        res.send('Project "' + projectName + '" created');
     });
 });
 
 /**
  * api/download
  * Endpoint to request the latest build from the server.
+ *
+ * @todo validate request client should be authorized on the server
+ * @todo validate project name (some-project-name)
+ * @todo client must provide project id?
  */
 router.get('/download', function(req, res) {
-    // TODO: validate request client should be authorized on the server
-    // validate project name (some-project-name)
-    // client must provide project id
     var project = req.query.project;
     var file = Finalizer.download(project);
     res.download(file);
-})
+});
 
 module.exports = router;
