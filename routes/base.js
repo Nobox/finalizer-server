@@ -25,6 +25,26 @@ router.post('/create', function(req, res) {
     });
 });
 
+
+/**
+ * api/build
+ * Endpoint to create a new build for a existing project.
+ * This can be executed as many times the user requires
+ * The project must exist
+ *
+ * @todo use an authentication token?
+ * @todo validate project name (some-project-name)
+ * @todo receive a valid package.json
+ */
+router.post('/build', function(req, res) {
+    var projectName = req.body.name;
+    var dependencies = req.body.dependencies;
+    Finalizer.build(projectName, dependencies, function() {
+        res.send('Project "' + projectName + '" new build created');
+    });
+});
+
+
 /**
  * api/download
  * Endpoint to request the latest build from the server.

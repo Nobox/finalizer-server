@@ -5,6 +5,7 @@
   "dependencies": {
     "body-parser": "^1.15.0",
     "caminte": "^0.2.7",
+    "deep-diff": "^0.3.3",
     "express": "^4.13.4",
     "kue": "^0.10.5",
     "mkdirp": "^0.5.1",
