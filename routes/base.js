@@ -14,14 +14,19 @@ router.use(function(req, res, next) {
  * This should be done only once.
  *
  * @todo use an authentication token?
- * @todo validate project name (some-project-name)
- * @todo receive a valid package.json
  */
 router.post('/create', function(req, res) {
     var projectName = req.body.name;
     var dependencies = req.body.dependencies;
-    Finalizer.create(projectName, dependencies, function() {
-        res.send('Project "' + projectName + '" created');
+    Finalizer.create(projectName, dependencies, function(err, msg) {
+        var response = { msg: '' };
+        if (!err) {
+            response.msg = msg;
+            res.json(response);
+            return;
+        }
+        response.msg = err;
+        res.status(400).json(response);
     });
 });
 
