@@ -53,10 +53,11 @@ router.post('/build', function(req, res) {
  * @todo validate project name (some-project-name)
  * @todo client must provide project id?
  */
-router.get('/download', function(req, res) {
-    var project = req.query.project;
-    var file = Finalizer.download(project);
-    res.download(file);
+router.post('/download', function(req, res) {
+    var projectName = req.body.name;
+    Finalizer.download(projectName, function(file) {
+        res.download(file);
+    });
 });
 
 module.exports = router;
