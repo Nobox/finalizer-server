@@ -60,8 +60,14 @@ router.post('/build', function(req, res) {
  */
 router.post('/download', function(req, res) {
     var projectName = req.body.name;
-    Finalizer.download(projectName, function(file) {
-        res.download(file);
+    Finalizer.download(projectName, function(err, file) {
+        var response = { msg: '' };
+        if (!err) {
+            res.download(file);
+            return;
+        }
+        response.msg = err;
+        res.status(400).json(response);
     });
 });
 
