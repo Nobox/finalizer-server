@@ -30,7 +30,6 @@ router.post('/create', function(req, res) {
     });
 });
 
-
 /**
  * api/build
  * Endpoint to create a new build for a existing project.
@@ -38,14 +37,19 @@ router.post('/create', function(req, res) {
  * The project must exist
  *
  * @todo use an authentication token?
- * @todo validate project name (some-project-name)
- * @todo receive a valid package.json
  */
 router.post('/build', function(req, res) {
     var projectName = req.body.name;
     var dependencies = req.body.dependencies;
-    Finalizer.build(projectName, dependencies, function() {
-        res.send('Project "' + projectName + '" new build created');
+    Finalizer.build(projectName, dependencies, function(err, msg) {
+        var response = { msg: '' };
+        if (!err) {
+            response.msg = msg;
+            res.json(response);
+            return;
+        }
+        response.msg = err;
+        res.status(400).json(response);
     });
 });
 
