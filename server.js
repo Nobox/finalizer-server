@@ -2,7 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var baseRoutes = require('./routes/base');
 var server = express();
-var PORT = 8080;
+var PORT = 5000;
 
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
