@@ -21,7 +21,7 @@
   },
   "scripts": {
     "test": "node_modules/mocha/bin/mocha tests",
-    "start": "node server.js"
+    "start": "NODE_ENV=development node server.js"
   },
   "repository": {
     "type": "git",
