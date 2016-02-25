@@ -6,7 +6,7 @@ module.exports = {
   },
   production: {
     redisPort: process.env.REDIS_PORT,
-    redisHost: process.env.REDIS_HOST,
+    redisHost: process.env.REDIS_URL,
     redisPassword: process.env.REDIS_PASSWORD
   }
 };
