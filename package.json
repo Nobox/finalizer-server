@@ -19,6 +19,7 @@
     "mocha": "^2.3.4",
     "sinon": "^1.17.3"
   },
+  "main": "app.js",
   "scripts": {
     "test": "node_modules/mocha/bin/mocha tests",
     "start": "NODE_ENV=development node server.js"
