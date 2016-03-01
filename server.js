@@ -1,10 +1,13 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var baseRoutes = require('./routes/base');
-var config = require('./config');
 var server = express();
-var PORT = config.serverPort;
-var HOST = config.privateIP;
+    require('dotenv').config();
+
+
+
+var PORT = process.env.SERVER_PORT;
+var HOST = process.env.PRIVATE_IP;
 
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
