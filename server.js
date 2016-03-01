@@ -1,11 +1,14 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var baseRoutes = require('./routes/base');
+var config = require('./config');
 var server = express();
-var PORT = 5000;
+var PORT = config.serverPort;
+var HOST = config.privateIP;
 
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
+server.set('environment', config.nodeEnv);
 
 server.get('/', function(req, res) {
     res.send('Finalizer server.');
@@ -13,6 +16,6 @@ server.get('/', function(req, res) {
 
 server.use('/api', baseRoutes);
 
-server.listen(PORT, function() {
-    console.log('Finalizer server running on ' + PORT);
+server.listen(PORT, HOST, function() {
+    console.log('Finalizer server running ');
 });

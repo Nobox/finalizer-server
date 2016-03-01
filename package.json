@@ -6,6 +6,7 @@
     "body-parser": "^1.15.0",
     "caminte": "^0.2.7",
     "deep-diff": "^0.3.3",
+    "envs": "^0.1.6",
     "express": "^4.13.4",
     "kue": "^0.10.5",
     "mkdirp": "^0.5.1",
@@ -21,7 +22,7 @@
   },
   "scripts": {
     "test": "node_modules/mocha/bin/mocha tests",
-    "start": "NODE_ENV=development node server.js"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
