@@ -1,12 +1,10 @@
+var envs = require('envs')
+
 module.exports = {
-  development: {
-    redisPort: 6379,
-    redisHost: 'localhost',
-    redisPassword: ''
-  },
-  production: {
-    redisPort: process.env.REDIS_PORT,
-    redisHost: process.env.REDIS_URL,
-    redisPassword: process.env.REDIS_PASSWORD
-  }
+    nodeEnv: envs('NODE_ENV', 'development'),
+    redisPort: envs('REDIS_PORT', 6379),
+    redisHost: envs('REDIS_URL', 'localhost'),
+    redisPassword: envs('REDIS_PASSWORD', ''),
+    privateIP: envs('PRIVATE_IP', 'localhost'),
+    serverPort: envs('SERVER_PORT', 8080)
 };
