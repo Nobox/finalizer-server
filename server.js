@@ -9,7 +9,7 @@ var env = habitat.load('./.env');
 
 var PORT = process.env.SERVER_PORT;
 var HOST = process.env.PRIVATE_IP;
-console.log(HOST, PORT);
+
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
 
