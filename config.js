@@ -1,10 +1,10 @@
-var envs = require('envs')
+require('dotenv').config();
 
 module.exports = {
-    nodeEnv: envs('NODE_ENV', 'development'),
-    redisPort: envs('REDIS_PORT', 6379),
-    redisHost: envs('REDIS_URL', 'localhost'),
-    redisPassword: envs('REDIS_PASSWORD', ''),
-    privateIP: envs('PRIVATE_IP', 'localhost'),
-    serverPort: envs('SERVER_PORT', 8080)
+    nodeEnv: process.env.NODE_ENV,
+    redisPort: process.env.REDIS_PORT,
+    redisHost: process.env.REDIS_URL,
+    redisPassword: process.env.REDIS_PASSWORD,
+    privateIP: process.env.PRIVATE_IP,
+    serverPort: process.env.SERVER_PORT
 };
