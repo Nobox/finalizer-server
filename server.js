@@ -2,13 +2,14 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var baseRoutes = require('./routes/base');
 var server = express();
-    require('dotenv').config();
+var habitat = require('habitat');
+var env = habitat.load('./.env');
 
 
 
 var PORT = process.env.SERVER_PORT;
 var HOST = process.env.PRIVATE_IP;
-
+console.log(HOST, PORT);
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
 
