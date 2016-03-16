@@ -64,7 +64,8 @@ router.post('/build', function(req, res) {
  */
 router.post('/download', function(req, res) {
     var projectName = req.body.name;
-    Finalizer.download(projectName, function(err, file) {
+    var dependencies = req.body.dependencies;
+    Finalizer.download(projectName, dependencies, function(err, file) {
         var response = { msg: '' };
         if (!err) {
             res.download(file);
