@@ -59,8 +59,6 @@ router.post('/build', function(req, res) {
  * Endpoint to request the latest build from the server.
  *
  * @todo validate request client should be authorized on the server
- * @todo validate project name (some-project-name)
- * @todo client must provide project id?
  */
 router.post('/download', function(req, res) {
     var projectName = req.body.name;
