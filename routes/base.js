@@ -76,4 +76,12 @@ router.post('/download', function(req, res) {
     });
 });
 
+/**
+ * api/check
+ * Endpoint to check connection from CLI client.
+ */
+router.post('/check', function(req, res) {
+    res.json({ msg: req.body.status });
+});
+
 module.exports = router;
