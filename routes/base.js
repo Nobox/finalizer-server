@@ -69,9 +69,7 @@ router.post('/download', function(req, res) {
             res.download(file);
             return;
         }
-        var response = { msg: '' };
-        response.msg = err;
-        res.status(400).json(response);
+        res.set('Error-Message', err).status(400).end();
     });
 });
 
