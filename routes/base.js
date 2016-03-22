@@ -65,11 +65,11 @@ router.post('/download', function(req, res) {
     var dependencies = req.body.dependencies;
     var firstTime = JSON.parse(req.body.first);
     Finalizer.download(projectName, firstTime, dependencies, function(err, file) {
-        var response = { msg: '' };
         if (!err) {
             res.download(file);
             return;
         }
+        var response = { msg: '' };
         response.msg = err;
         res.status(400).json(response);
     });
