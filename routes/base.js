@@ -18,10 +18,11 @@ router.use(function(req, res, next) {
 router.post('/create', function(req, res) {
     var projectName = req.body.name;
     var dependencies = req.body.dependencies;
-    Finalizer.create(projectName, dependencies, function(err, msg) {
+    Finalizer.create(projectName, dependencies, function(err, msg, data) {
         var response = { msg: '' };
         if (!err) {
             response.msg = msg;
+            response.data = data;
             res.json(response);
             return;
         }
@@ -62,10 +63,12 @@ router.post('/build', function(req, res) {
  */
 router.post('/download', function(req, res) {
     var projectName = req.body.name;
-    var dependencies = req.body.dependencies;
-    var firstTime = JSON.parse(req.body.first);
-    Finalizer.download(projectName, firstTime, dependencies, function(err, file) {
+    // var dependencies = req.body.dependencies;
+    var buildId = req.body.buildId;
+    // var firstTime = JSON.parse(req.body.first);
+    Finalizer.download(projectName, buildId, function(err, file, id) {
         if (!err) {
+            res.setHeader('build-id-header', id);
             res.download(file);
             return;
         }
